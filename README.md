@@ -1,11 +1,3 @@
-
-
-https://github.com/user-attachments/assets/07fe24b5-a943-45c6-8171-231e612a1568
-
-
-
-https://github.com/user-attachments/assets/a3dd6cf4-82bd-42cc-849f-1ede217b3a97
-
 <div align="center">
 
   <img src="public/logo-icon.png" alt="Phyzo Logo" width="96" height="96" style="border-radius: 20px; box-shadow: 0 0 35px rgba(25, 227, 245, 0.4);" />
@@ -27,10 +19,7 @@ https://github.com/user-attachments/assets/a3dd6cf4-82bd-42cc-849f-1ede217b3a97
   <br />
   <br />
 
-  <!-- Launch Video Showcase -->
-  <video src="brag-output/phyzo.mp4" controls width="100%" poster="brag-output/brag.jpg" style="border-radius: 14px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7); border: 1px solid rgba(240, 230, 216, 0.15);">
-    <p>Your browser does not support HTML5 video. <a href="brag-output/phyzo.mp4">Download and watch the launch video</a>.</p>
-  </video>
+https://github.com/user-attachments/assets/a3dd6cf4-82bd-42cc-849f-1ede217b3a97
 
   <p align="center">
     <i>✨ Watch light refract through prisms, charged particles curve through magnetic fields, and quantum wavefunctions evolve in real-time.</i>
