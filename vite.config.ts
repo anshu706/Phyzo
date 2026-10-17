@@ -5,6 +5,11 @@ import path from 'path';
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    port: 5180,
+    strictPort: true,
+    host: true,
+  },
   resolve: {
     alias: {
       'hls.js': path.resolve(__dirname, 'node_modules/hls.js/dist/hls.js')
