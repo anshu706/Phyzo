@@ -400,25 +400,27 @@ export const LiveMathOverlay: React.FC = () => {
               );
             })()}
           </div>
-        ) : activePresetId === 'gas-thermodynamics' ? (
+        ) : (activePresetId === 'gas-thermodynamics' || targetObj?.type === 'gas_chamber') ? (
           <div className="space-y-2">
             {(() => {
-              const chamber = objects.find((o) => o.type === 'gas_chamber') || targetObj;
+              const chamber = (targetObj?.type === 'gas_chamber' ? targetObj : null) || objects.find((o) => o.type === 'gas_chamber') || targetObj;
               const T = chamber?.temperature || 300;
               const N = chamber?.particleCount || 80;
               const V = 4 * 4 * 4; // 64 m^3
               const kB = 1.3806e-23;
               const P = (N * kB * T) / V;
               const vRms = Math.sqrt((3 * 1.0 * T) / 1.0); // scaled sim units
+              const vMp = vRms * Math.sqrt(2 / 3);
+              const vAvg = vRms * Math.sqrt(8 / (3 * Math.PI));
 
               return (
                 <>
                   <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
                     <div className="text-[10px] font-mono text-limestone-muted mb-1 flex items-center justify-between">
                       <span>Ideal Gas Law Equation</span>
-                      <span className="text-emerald-400 font-semibold">T = {T} K</span>
+                      <span className="text-emerald-400 font-semibold">T = {T} K • N = {N}</span>
                     </div>
-                    <KaTeXBlock math={`PV = N k_B T \\implies P = \\frac{N k_B T}{V}`} />
+                    <KaTeXBlock math={`PV = N k_B T \\implies P = \\frac{(${N})k_B(${T})}{${V}\\text{m}^3}`} />
                   </div>
 
                   <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
@@ -430,33 +432,61 @@ export const LiveMathOverlay: React.FC = () => {
                     <div className="text-[10px] font-mono text-limestone-muted mb-1">Average Molecular Kinetic Energy</div>
                     <KaTeXBlock math={`\\langle K \\rangle = \\frac{3}{2} k_B T = \\frac{3}{2}(1.38\\times 10^{-23})(${T}) = ${(1.5 * kB * T * 1e21).toFixed(2)}\\times 10^{-21}\\text{ J}`} />
                   </div>
+
+                  {/* Maxwell-Boltzmann Live Speed Distribution Histogram */}
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5 space-y-1.5">
+                    <div className="text-[10px] font-mono text-limestone-muted flex justify-between">
+                      <span>Speed Distribution f(v)</span>
+                      <span className="text-emerald-400 font-bold">v_rms: {vRms.toFixed(1)} m/s</span>
+                    </div>
+                    <div className="flex items-end gap-1 h-12 pt-1 border-b border-white/10">
+                      {[0.12, 0.42, 0.82, 1.0, 0.85, 0.55, 0.3, 0.14, 0.05].map((h, i) => (
+                        <div
+                          key={i}
+                          className="flex-1 rounded-t bg-gradient-to-t from-emerald-500/25 via-[#19E3F5]/60 to-[#19E3F5]"
+                          style={{ height: `${Math.round(h * 100)}%` }}
+                        />
+                      ))}
+                    </div>
+                    <div className="flex justify-between text-[9px] font-mono text-limestone-muted/70">
+                      <span>v_mp = {vMp.toFixed(1)} m/s</span>
+                      <span>v_avg = {vAvg.toFixed(1)} m/s</span>
+                      <span className="text-[#19E3F5]">v_rms = {vRms.toFixed(1)} m/s</span>
+                    </div>
+                  </div>
                 </>
               );
             })()}
           </div>
-        ) : activePresetId === 'photoelectric-effect' ? (
+        ) : (activePresetId === 'photoelectric-effect' || targetObj?.type === 'photoelectric_emitter') ? (
           <div className="space-y-2">
             {(() => {
-              const photo = objects.find((o) => o.type === 'photoelectric_emitter') || targetObj;
+              const photo = (targetObj?.type === 'photoelectric_emitter' ? targetObj : null) || objects.find((o) => o.type === 'photoelectric_emitter') || targetObj;
               const freq = photo?.incidentPhotonFreq || 7.5e14;
               const phi = photo?.workFunction || 2.1;
               const h_eV = 4.135667e-15; // eV·s
               const E_photon = h_eV * freq;
               const keMax = Math.max(0, E_photon - phi);
               const vStop = keMax;
+              const fThreshold = phi / h_eV;
 
               return (
                 <>
                   <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
                     <div className="text-[10px] font-mono text-limestone-muted mb-1 flex items-center justify-between">
                       <span>Einstein Photoelectric Equation</span>
-                      <span className="text-purple-400 font-semibold">{keMax > 0 ? 'Photoelectrons Ejected' : 'No Emission'}</span>
+                      <span className={keMax > 0 ? 'text-emerald-400 font-semibold' : 'text-racing-red font-semibold'}>
+                        {keMax > 0 ? 'Photoelectrons Ejected' : 'Below Threshold'}
+                      </span>
                     </div>
                     <KaTeXBlock math={`K_{max} = hf - \\Phi = ${E_photon.toFixed(2)} - ${phi.toFixed(2)} = ${keMax.toFixed(2)}\\text{ eV}`} />
                   </div>
 
                   <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
-                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Incident Photon Energy</div>
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1 flex items-center justify-between">
+                      <span>Incident Photon & Threshold Frequency</span>
+                      <span className="text-purple-400 font-mono">f₀ = {(fThreshold / 1e14).toFixed(2)} × 10¹⁴ Hz</span>
+                    </div>
                     <KaTeXBlock math={`E = hf = (${(freq / 1e14).toFixed(1)}\\times 10^{14}\\text{ Hz})h = ${E_photon.toFixed(2)}\\text{ eV}`} />
                   </div>
 
@@ -468,20 +498,25 @@ export const LiveMathOverlay: React.FC = () => {
               );
             })()}
           </div>
-        ) : activePresetId === 'hydrogen-orbital' ? (
+        ) : (activePresetId === 'hydrogen-orbital' || targetObj?.type === 'hydrogen_atom') ? (
           <div className="space-y-2">
             {(() => {
-              const hAtom = objects.find((o) => o.type === 'hydrogen_atom') || targetObj;
+              const hAtom = (targetObj?.type === 'hydrogen_atom' ? targetObj : null) || objects.find((o) => o.type === 'hydrogen_atom') || targetObj;
               const n = hAtom?.quantumN || 2;
+              const l = hAtom?.quantumL || 0;
+              const lNames = ['s', 'p', 'd', 'f'];
+              const subshell = `${n}${lNames[l] || 's'}`;
               const E_n = -13.6 / (n * n);
               const r_n = n * n; // in Bohr radii
+              const deltaE_lyman = 13.6 * (1 - 1 / (n * n));
+              const lambda_lyman = n > 1 ? (1240 / deltaE_lyman).toFixed(1) : '—';
 
               return (
                 <>
                   <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
                     <div className="text-[10px] font-mono text-limestone-muted mb-1 flex items-center justify-between">
                       <span>Bohr Energy Quantization</span>
-                      <span className="text-[#19E3F5] font-semibold">n = {n}</span>
+                      <span className="text-[#19E3F5] font-semibold">{subshell} orbital (n={n}, l={l})</span>
                     </div>
                     <KaTeXBlock math={`E_n = -\\frac{13.6\\text{ eV}}{n^2} = -\\frac{13.6}{${n}^2} = ${E_n.toFixed(2)}\\text{ eV}`} />
                   </div>
@@ -492,17 +527,17 @@ export const LiveMathOverlay: React.FC = () => {
                   </div>
 
                   <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
-                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Lyman Transition Emission (n → 1)</div>
-                    <KaTeXBlock math={`\\Delta E = 13.6\\left(1 - \\frac{1}{${n}^2}\\right) = ${(13.6 * (1 - 1 / (n * n))).toFixed(2)}\\text{ eV}`} />
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Spectral Emission ({subshell} → 1s Lyman)</div>
+                    <KaTeXBlock math={`\\Delta E = ${deltaE_lyman.toFixed(2)}\\text{ eV}, \\quad \\lambda = \\frac{hc}{\\Delta E} = ${lambda_lyman}\\text{ nm}`} />
                   </div>
                 </>
               );
             })()}
           </div>
-        ) : activePresetId === 'quantum-infinite-well' ? (
+        ) : (activePresetId === 'quantum-infinite-well' || targetObj?.type === 'quantum_well') ? (
           <div className="space-y-2">
             {(() => {
-              const well = objects.find((o) => o.type === 'quantum_well') || targetObj;
+              const well = (targetObj?.type === 'quantum_well' ? targetObj : null) || objects.find((o) => o.type === 'quantum_well') || targetObj;
               const n = well?.quantumN || 2;
               const L_nm = well?.wellWidth || 2.5;
               const L_m = L_nm * 1e-9;
@@ -510,13 +545,14 @@ export const LiveMathOverlay: React.FC = () => {
               const m_e = 9.109e-31;
               const E_joules = (n * n * h_p * h_p) / (8 * m_e * L_m * L_m);
               const E_eV = E_joules / 1.602e-19;
+              const nodeCount = n - 1;
 
               return (
                 <>
                   <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
                     <div className="text-[10px] font-mono text-limestone-muted mb-1 flex items-center justify-between">
                       <span>1D Schrödinger Time-Independent Eq</span>
-                      <span className="text-emerald-400 font-semibold">n = {n}</span>
+                      <span className="text-emerald-400 font-semibold">n = {n} ({nodeCount} nodes)</span>
                     </div>
                     <KaTeXBlock math={`-\\frac{\\hbar^2}{2m}\\frac{d^2\\psi}{dx^2} = E\\psi`} />
                   </div>

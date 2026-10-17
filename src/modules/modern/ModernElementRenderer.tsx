@@ -57,9 +57,38 @@ export const ModernElementRenderer: React.FC<ModernElementProps> = ({ data }) =>
   const [photoelectrons, setPhotoelectrons] = useState<{ id: number; pos: [number, number, number]; vel: [number, number, number] }[]>([]);
 
   // Simulation frame update
+  const [wellPhase, setWellPhase] = useState(0);
+  const [electronAngle, setElectronAngle] = useState(0);
+
+  // Synchronize gas particles when user changes count or temperature in inspector
+  React.useEffect(() => {
+    if (data.type === 'gas_chamber') {
+      const targetCount = data.particleCount || 60;
+      const targetTemp = data.temperature || 300;
+      setGasParticles((prev) => {
+        if (prev.length !== targetCount) {
+          return initializeGasChamber(targetCount, targetTemp, chamberBounds);
+        }
+        return prev;
+      });
+    }
+  }, [data.type, data.particleCount, chamberBounds]);
+
   useFrame((_, delta) => {
     if (!isPlaying) return;
     const dt = Math.min(delta, 0.05) * timeScale;
+
+    // Update quantum well wave phase
+    if (data.type === 'quantum_well') {
+      const n = data.quantumN || 1;
+      setWellPhase((p) => (p + dt * n * 2.5) % (Math.PI * 2));
+    }
+
+    // Update orbiting electron on Bohr radius
+    if (data.type === 'hydrogen_atom') {
+      const n = data.quantumN || 2;
+      setElectronAngle((a) => (a + dt * (3.0 / n)) % (Math.PI * 2));
+    }
 
     // Update gas particles
     if (data.type === 'gas_chamber') {
@@ -77,14 +106,14 @@ export const ModernElementRenderer: React.FC<ModernElementProps> = ({ data }) =>
       const phi = data.workFunction || 2.3;
       const ke = photonEnergy - phi;
 
-      if (ke > 0 && Math.random() < 0.25) {
-        const speed = Math.sqrt(ke) * 2.5;
+      if (ke > 0 && Math.random() < 0.3) {
+        const speed = Math.sqrt(ke) * 2.8;
         setPhotoelectrons((prev) => [
-          ...prev.slice(-40),
+          ...prev.slice(-35),
           {
             id: Math.random(),
-            pos: [-1.2, 0, (Math.random() - 0.5) * 1.5],
-            vel: [speed, (Math.random() - 0.5) * 0.5, (Math.random() - 0.5) * 0.5]
+            pos: [-1.2, (Math.random() - 0.5) * 1.8, (Math.random() - 0.5) * 1.5],
+            vel: [speed, (Math.random() - 0.5) * 0.4, (Math.random() - 0.5) * 0.4]
           }
         ]);
       }
@@ -95,7 +124,7 @@ export const ModernElementRenderer: React.FC<ModernElementProps> = ({ data }) =>
             ...p,
             pos: [p.pos[0] + p.vel[0] * dt, p.pos[1] + p.vel[1] * dt, p.pos[2] + p.vel[2] * dt] as [number, number, number]
           }))
-          .filter((p) => p.pos[0] < 3.5)
+          .filter((p) => p.pos[0] < 2.5)
       );
     }
   });
@@ -105,6 +134,26 @@ export const ModernElementRenderer: React.FC<ModernElementProps> = ({ data }) =>
     selectObject(data.id);
   };
 
+  // Incident light color based on frequency
+  const incidentLightColor = useMemo(() => {
+    const freq = data.incidentPhotonFreq || 7.0e14;
+    const lambdaNm = (3e8 / freq) * 1e9;
+    if (lambdaNm < 390) return '#C084FC'; // UV
+    if (lambdaNm > 700) return '#EF4444'; // Red / IR
+    if (lambdaNm >= 390 && lambdaNm < 450) return '#818CF8';
+    if (lambdaNm >= 450 && lambdaNm < 520) return '#38BDF8';
+    if (lambdaNm >= 520 && lambdaNm < 590) return '#34D399';
+    return '#FBBF24';
+  }, [data.incidentPhotonFreq]);
+
+  // Orbital name helper
+  const orbitalName = useMemo(() => {
+    const n = data.quantumN || 2;
+    const l = data.quantumL || 0;
+    const lLetters = ['s', 'p', 'd', 'f'];
+    return `${n}${lLetters[l] || 's'}`;
+  }, [data.quantumN, data.quantumL]);
+
   const renderContent = () => {
     switch (data.type) {
       case 'gas_chamber': {
@@ -112,7 +161,6 @@ export const ModernElementRenderer: React.FC<ModernElementProps> = ({ data }) =>
         const particlePositions = new Float32Array(gasParticles.flatMap((p) => p.position));
         const particleColors = new Float32Array(
           gasParticles.flatMap((p) => {
-            // Hotter particles glow red/orange, cooler ones cyan/blue
             const normalizedSpeed = Math.min(1, p.speed / 4.0);
             return [normalizedSpeed, 0.4 * (1 - normalizedSpeed), 1 - normalizedSpeed];
           })
@@ -156,7 +204,7 @@ export const ModernElementRenderer: React.FC<ModernElementProps> = ({ data }) =>
                   />
                 </bufferGeometry>
                 <pointsMaterial
-                  size={0.18}
+                  size={0.2}
                   vertexColors
                   transparent
                   opacity={0.95}
@@ -171,6 +219,9 @@ export const ModernElementRenderer: React.FC<ModernElementProps> = ({ data }) =>
       case 'hydrogen_atom': {
         const cloudPositions = new Float32Array(hydrogenPoints.flatMap((p) => [p[0] * 0.4, p[1] * 0.4, p[2] * 0.4]));
         const n = data.quantumN || 2;
+        const orbitRadius = n * 0.8;
+        const electronX = Math.cos(electronAngle) * orbitRadius;
+        const electronZ = Math.sin(electronAngle) * orbitRadius;
 
         return (
           <group>
@@ -192,6 +243,12 @@ export const ModernElementRenderer: React.FC<ModernElementProps> = ({ data }) =>
               </mesh>
             ))}
 
+            {/* Orbiting Valence Electron on active Bohr level */}
+            <mesh position={[electronX, 0, electronZ]}>
+              <sphereGeometry args={[0.09, 16, 16]} />
+              <meshStandardMaterial color="#19E3F5" emissive="#19E3F5" emissiveIntensity={1.2} />
+            </mesh>
+
             {/* 3D Volumetric Probability Density Cloud |Ψ|² */}
             {cloudPositions.length > 0 && (
               <points>
@@ -204,10 +261,10 @@ export const ModernElementRenderer: React.FC<ModernElementProps> = ({ data }) =>
                   />
                 </bufferGeometry>
                 <pointsMaterial
-                  size={0.1}
+                  size={0.12}
                   color="#19E3F5"
                   transparent
-                  opacity={0.65}
+                  opacity={0.7}
                   blending={THREE.AdditiveBlending}
                 />
               </points>
@@ -221,9 +278,9 @@ export const ModernElementRenderer: React.FC<ModernElementProps> = ({ data }) =>
         const width = data.wellWidth || 3.0;
         const halfW = width / 2;
 
-        // Wave function points
+        // Wave function points oscillating with time phase
         const psiPts = quantumWellData.psiSamples.map(
-          (s) => new THREE.Vector3((s.x - 0.5) * width, s.psi * 1.5, 0)
+          (s) => new THREE.Vector3((s.x - 0.5) * width, s.psi * 1.5 * Math.cos(wellPhase), 0)
         );
         const probPts = quantumWellData.psiSamples.map(
           (s) => new THREE.Vector3((s.x - 0.5) * width, s.probDensity * 2.0, 0)
@@ -249,7 +306,7 @@ export const ModernElementRenderer: React.FC<ModernElementProps> = ({ data }) =>
               <meshStandardMaterial color="#1E293B" />
             </mesh>
 
-            {/* Standing Wave Function ψ(x) Line */}
+            {/* Standing Wave Function Re[Ψ(x,t)] Line */}
             <line>
               <bufferGeometry>
                 <bufferAttribute
@@ -272,13 +329,19 @@ export const ModernElementRenderer: React.FC<ModernElementProps> = ({ data }) =>
                   itemSize={3}
                 />
               </bufferGeometry>
-              <lineBasicMaterial color="#DD0200" linewidth={3} transparent opacity={0.8} />
+              <lineBasicMaterial color="#DD0200" linewidth={3} transparent opacity={0.85} />
             </line>
           </group>
         );
       }
 
       case 'photoelectric_emitter': {
+        const phi = data.workFunction || 2.3;
+        const h_planck = 4.135667e-15;
+        const freq = data.incidentPhotonFreq || 7.0e14;
+        const photonEnergy = h_planck * freq;
+        const isEmitting = photonEnergy > phi;
+
         return (
           <group>
             {/* Cathode Metal Plate (Emitter) */}
@@ -293,11 +356,11 @@ export const ModernElementRenderer: React.FC<ModernElementProps> = ({ data }) =>
               <meshStandardMaterial color="#64748B" metalness={0.8} roughness={0.4} transparent opacity={0.5} />
             </mesh>
 
-            {/* Incident Photon Light Rays (Purple / UV) */}
+            {/* Incident Photon Light Rays with dynamic wavelength color */}
             {[-0.8, 0, 0.8].map((yOff) => (
               <mesh key={yOff} position={[-2.8, yOff + 0.5, 0]} rotation={[0, 0, -Math.PI / 4]}>
-                <cylinderGeometry args={[0.02, 0.02, 1.8, 8]} />
-                <meshBasicMaterial color="#A855F7" />
+                <cylinderGeometry args={[0.025, 0.025, 1.8, 8]} />
+                <meshBasicMaterial color={incidentLightColor} />
               </mesh>
             ))}
 
@@ -308,6 +371,12 @@ export const ModernElementRenderer: React.FC<ModernElementProps> = ({ data }) =>
                 <meshBasicMaterial color="#19E3F5" />
               </mesh>
             ))}
+
+            {/* Circuit Wire connection indicator */}
+            <mesh position={[0.5, -1.8, 0]}>
+              <boxGeometry args={[4.2, 0.05, 0.05]} />
+              <meshBasicMaterial color={isEmitting ? '#34D399' : '#64748B'} />
+            </mesh>
           </group>
         );
       }
