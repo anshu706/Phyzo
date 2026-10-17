@@ -1,3 +1,11 @@
+
+
+https://github.com/user-attachments/assets/07fe24b5-a943-45c6-8171-231e612a1568
+
+
+
+https://github.com/user-attachments/assets/a3dd6cf4-82bd-42cc-849f-1ede217b3a97
+
 <div align="center">
 
   <img src="public/logo-icon.png" alt="Phyzo Logo" width="96" height="96" style="border-radius: 20px; box-shadow: 0 0 35px rgba(25, 227, 245, 0.4);" />
