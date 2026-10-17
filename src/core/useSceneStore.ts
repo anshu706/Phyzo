@@ -175,6 +175,352 @@ export const useSceneStore = create<SceneState>((set, get) => ({
           ...overrides
         };
         break;
+
+      // Optics Elements
+      case 'convex_lens':
+        newObj = {
+          id,
+          name: `Convex Lens ${get().objects.length + 1}`,
+          type: 'convex_lens',
+          position: [0, 2, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 1.0,
+          isStatic: true,
+          material: { friction: 0.1, restitution: 0.5, density: 2500 },
+          initialVelocity: [0, 0, 0],
+          focalLength: 3.5,
+          refractiveIndex: 1.517,
+          aperture: 3.0,
+          color: '#E0F7FA',
+          ...overrides
+        };
+        break;
+
+      case 'concave_lens':
+        newObj = {
+          id,
+          name: `Concave Lens ${get().objects.length + 1}`,
+          type: 'concave_lens',
+          position: [0, 2, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 1.0,
+          isStatic: true,
+          material: { friction: 0.1, restitution: 0.5, density: 2500 },
+          initialVelocity: [0, 0, 0],
+          focalLength: -3.5,
+          refractiveIndex: 1.517,
+          aperture: 3.0,
+          color: '#EBF8FF',
+          ...overrides
+        };
+        break;
+
+      case 'flat_mirror':
+        newObj = {
+          id,
+          name: `Plane Mirror ${get().objects.length + 1}`,
+          type: 'flat_mirror',
+          position: [3, 2, 0],
+          rotation: [0, Math.PI / 4, 0],
+          scale: [1, 1, 1],
+          mass: 2.0,
+          isStatic: true,
+          material: { friction: 0.2, restitution: 0.4, density: 2500 },
+          initialVelocity: [0, 0, 0],
+          aperture: 3.5,
+          color: '#FFFFFF',
+          ...overrides
+        };
+        break;
+
+      case 'curved_mirror':
+        newObj = {
+          id,
+          name: `Concave Mirror ${get().objects.length + 1}`,
+          type: 'curved_mirror',
+          position: [4, 2, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 2.0,
+          isStatic: true,
+          material: { friction: 0.2, restitution: 0.4, density: 2500 },
+          initialVelocity: [0, 0, 0],
+          mirrorRadius: 6.0,
+          aperture: 3.5,
+          color: '#E2E8F0',
+          ...overrides
+        };
+        break;
+
+      case 'prism':
+        newObj = {
+          id,
+          name: `Dispersive Prism ${get().objects.length + 1}`,
+          type: 'prism',
+          position: [0, 1.8, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 1.5,
+          isStatic: true,
+          material: { friction: 0.2, restitution: 0.4, density: 2600 },
+          initialVelocity: [0, 0, 0],
+          refractiveIndex: 1.52,
+          cauchyB: 0.005,
+          prismAngle: 60,
+          color: '#F0F8FF',
+          ...overrides
+        };
+        break;
+
+      case 'laser_emitter':
+        newObj = {
+          id,
+          name: `Laser Pointer ${get().objects.length + 1}`,
+          type: 'laser_emitter',
+          position: [-6, 2, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 0.5,
+          isStatic: true,
+          material: { friction: 0.3, restitution: 0.3, density: 1000 },
+          initialVelocity: [0, 0, 0],
+          beamWavelength: 532,
+          beamSpread: 0.2,
+          rayCount: 5,
+          color: '#19E3F5',
+          ...overrides
+        };
+        break;
+
+      case 'white_light_emitter':
+        newObj = {
+          id,
+          name: `White Light Source ${get().objects.length + 1}`,
+          type: 'white_light_emitter',
+          position: [-6, 2, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 0.8,
+          isStatic: true,
+          material: { friction: 0.3, restitution: 0.3, density: 1200 },
+          initialVelocity: [0, 0, 0],
+          isWhiteLight: true,
+          beamSpread: 1.5,
+          rayCount: 7,
+          color: '#F0E6D8',
+          ...overrides
+        };
+        break;
+
+      // Electromagnetism Elements
+      case 'charge_positive':
+        newObj = {
+          id,
+          name: `+ Charge ${get().objects.length + 1}`,
+          type: 'charge_positive',
+          position: [-2, 2, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 0.01,
+          isStatic: true,
+          material: { friction: 0, restitution: 0, density: 1000 },
+          initialVelocity: [0, 0, 0],
+          charge: 2.0,
+          color: '#DD0200',
+          ...overrides
+        };
+        break;
+
+      case 'charge_negative':
+        newObj = {
+          id,
+          name: `− Charge ${get().objects.length + 1}`,
+          type: 'charge_negative',
+          position: [2, 2, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 0.01,
+          isStatic: true,
+          material: { friction: 0, restitution: 0, density: 1000 },
+          initialVelocity: [0, 0, 0],
+          charge: -2.0,
+          color: '#2563EB',
+          ...overrides
+        };
+        break;
+
+      case 'bar_magnet':
+        newObj = {
+          id,
+          name: `Bar Magnet ${get().objects.length + 1}`,
+          type: 'bar_magnet',
+          position: [0, 2, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 0.5,
+          isStatic: true,
+          material: { friction: 0.3, restitution: 0.2, density: 7800 },
+          initialVelocity: [0, 0, 0],
+          magneticMoment: 15.0,
+          color: '#DC2626',
+          ...overrides
+        };
+        break;
+
+      case 'current_wire':
+        newObj = {
+          id,
+          name: `Current Wire ${get().objects.length + 1}`,
+          type: 'current_wire',
+          position: [0, 0, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 1.0,
+          isStatic: true,
+          material: { friction: 0.3, restitution: 0.1, density: 8900 },
+          initialVelocity: [0, 0, 0],
+          current: 10.0,
+          color: '#F59E0B',
+          ...overrides
+        };
+        break;
+
+      case 'solenoid':
+        newObj = {
+          id,
+          name: `Solenoid ${get().objects.length + 1}`,
+          type: 'solenoid',
+          position: [0, 2, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 2.0,
+          isStatic: true,
+          material: { friction: 0.3, restitution: 0.1, density: 8900 },
+          initialVelocity: [0, 0, 0],
+          current: 8.0,
+          turnsCount: 100,
+          color: '#F59E0B',
+          ...overrides
+        };
+        break;
+
+      case 'uniform_field':
+        newObj = {
+          id,
+          name: `Uniform Field ${get().objects.length + 1}`,
+          type: 'uniform_field',
+          position: [0, 2, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 0,
+          isStatic: true,
+          material: { friction: 0, restitution: 0, density: 0 },
+          initialVelocity: [0, 0, 0],
+          eFieldVector: [5.0, 0, 0],
+          color: '#19E3F5',
+          ...overrides
+        };
+        break;
+
+      case 'charged_particle':
+        newObj = {
+          id,
+          name: `Test Particle ${get().objects.length + 1}`,
+          type: 'charged_particle',
+          position: [0, 4, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 1.0,
+          isStatic: false,
+          material: { friction: 0, restitution: 1.0, density: 1000 },
+          initialVelocity: [2, 0, 1],
+          charge: 1.0,
+          color: '#19E3F5',
+          ...overrides
+        };
+        break;
+
+      // Thermodynamics & Modern / Quantum Elements
+      case 'gas_chamber':
+        newObj = {
+          id,
+          name: `Gas Chamber ${get().objects.length + 1}`,
+          type: 'gas_chamber',
+          position: [0, 2, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 10,
+          isStatic: true,
+          material: { friction: 0, restitution: 1.0, density: 1000 },
+          initialVelocity: [0, 0, 0],
+          temperature: 300,
+          particleCount: 80,
+          chamberDimensions: [4, 4, 4],
+          color: '#F0E6D8',
+          ...overrides
+        };
+        break;
+
+      case 'photoelectric_emitter':
+        newObj = {
+          id,
+          name: `Photoelectric Plate ${get().objects.length + 1}`,
+          type: 'photoelectric_emitter',
+          position: [0, 2, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 5,
+          isStatic: true,
+          material: { friction: 0.3, restitution: 0.1, density: 7800 },
+          initialVelocity: [0, 0, 0],
+          workFunction: 2.3,
+          incidentPhotonFreq: 6.5e14,
+          color: '#94A3B8',
+          ...overrides
+        };
+        break;
+
+      case 'hydrogen_atom':
+        newObj = {
+          id,
+          name: `Hydrogen Atom ${get().objects.length + 1}`,
+          type: 'hydrogen_atom',
+          position: [0, 2, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 1.67e-27,
+          isStatic: true,
+          material: { friction: 0, restitution: 0, density: 0 },
+          initialVelocity: [0, 0, 0],
+          quantumN: 1,
+          quantumL: 0,
+          quantumM: 0,
+          color: '#A855F7',
+          ...overrides
+        };
+        break;
+
+      case 'quantum_well':
+        newObj = {
+          id,
+          name: `Quantum Well ${get().objects.length + 1}`,
+          type: 'quantum_well',
+          position: [0, 2, 0],
+          rotation: [0, 0, 0],
+          scale: [1, 1, 1],
+          mass: 9.109e-31,
+          isStatic: true,
+          material: { friction: 0, restitution: 0, density: 0 },
+          initialVelocity: [0, 0, 0],
+          quantumN: 1,
+          wellWidth: 1.0,
+          color: '#19E3F5',
+          ...overrides
+        };
+        break;
+
       default:
         return;
     }

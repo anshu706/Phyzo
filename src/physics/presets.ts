@@ -203,5 +203,172 @@ export const SCENE_PRESETS: ScenePreset[] = [
         color: '#6F7F5F'
       }
     ]
+  },
+  {
+    id: 'thin-lens-imaging',
+    title: 'Convex Lens Imaging Conjugates',
+    description: 'Light rays diverge from emitter, refract through the converging biconvex lens, and refocus at real conjugate image plane.',
+    formula: '\\frac{1}{f} = \\frac{1}{d_o} + \\frac{1}{d_i}, \\quad M = -\\frac{d_i}{d_o}',
+    gravity: [0, 0, 0],
+    initialCaption: 'Convex lens (f = 3.5m) placed at origin. Object distance d_o = 6.0m yields real inverted image at d_i = 8.4m.',
+    objects: [
+      {
+        id: 'optics-laser-source',
+        name: 'Laser Beam Emitter',
+        type: 'laser_emitter',
+        position: [-6, 2, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 1.0,
+        isStatic: true,
+        material: { friction: 0.2, restitution: 0.2, density: 1000 },
+        initialVelocity: [0, 0, 0],
+        beamWavelength: 532,
+        beamSpread: 2.0,
+        rayCount: 7,
+        color: '#19E3F5'
+      },
+      {
+        id: 'optics-convex-lens',
+        name: 'Biconvex Lens (f = 3.5m)',
+        type: 'convex_lens',
+        position: [0, 2, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 1.0,
+        isStatic: true,
+        material: { friction: 0.1, restitution: 0.5, density: 2500 },
+        initialVelocity: [0, 0, 0],
+        focalLength: 3.5,
+        refractiveIndex: 1.517,
+        aperture: 3.5,
+        color: '#E0F7FA'
+      }
+    ]
+  },
+  {
+    id: 'prism-dispersion',
+    title: 'Prism Chromatic Dispersion',
+    description: 'White light containing all visible wavelengths disperses according to Cauchy equation n(λ) = A + B/λ². Violet refracts more than red.',
+    formula: 'n(\\lambda) = A + \\frac{B}{\\lambda^2}, \\quad n_1 \\sin\\theta_1 = n_2 \\sin\\theta_2',
+    gravity: [0, 0, 0],
+    initialCaption: 'White light bundle strikes 60° triangular flint glass prism. Dispersion reveals rainbow spectrum (400nm - 700nm).',
+    objects: [
+      {
+        id: 'optics-white-light',
+        name: 'White Light Beam',
+        type: 'white_light_emitter',
+        position: [-5, 2.2, 0],
+        rotation: [0, 0, -0.05],
+        scale: [1, 1, 1],
+        mass: 1.0,
+        isStatic: true,
+        material: { friction: 0.2, restitution: 0.2, density: 1000 },
+        initialVelocity: [0, 0, 0],
+        isWhiteLight: true,
+        beamSpread: 1.0,
+        rayCount: 7,
+        color: '#F0E6D8'
+      },
+      {
+        id: 'optics-prism',
+        name: 'Equilateral Glass Prism',
+        type: 'prism',
+        position: [0, 1.8, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 1.5,
+        isStatic: true,
+        material: { friction: 0.2, restitution: 0.4, density: 2600 },
+        initialVelocity: [0, 0, 0],
+        refractiveIndex: 1.52,
+        cauchyB: 0.005,
+        prismAngle: 60,
+        color: '#F0F8FF'
+      }
+    ]
+  },
+  {
+    id: 'tir-reflection',
+    title: 'Total Internal Reflection & Critical Angle',
+    description: 'When light in a high-index medium strikes a boundary with air above the critical angle θ_c, 100% of light undergoes internal reflection.',
+    formula: '\\theta_c = \\arcsin\\left(\\frac{n_2}{n_1}\\right) \\approx 41.1^\\circ \\quad (\\text{Glass to Air})',
+    gravity: [0, 0, 0],
+    initialCaption: 'Incident angle θ_1 = 45° > θ_c = 41.1°. Complete reflection occurs inside prism without light loss.',
+    objects: [
+      {
+        id: 'tir-emitter',
+        name: 'TIR Laser Source',
+        type: 'laser_emitter',
+        position: [-3.5, 0.8, 0],
+        rotation: [0, 0, 0.785], // 45 degrees
+        scale: [1, 1, 1],
+        mass: 1.0,
+        isStatic: true,
+        material: { friction: 0.2, restitution: 0.2, density: 1000 },
+        initialVelocity: [0, 0, 0],
+        beamWavelength: 633, // Helium-Neon Red
+        beamSpread: 0.1,
+        rayCount: 3,
+        color: '#FF2222'
+      },
+      {
+        id: 'tir-prism',
+        name: 'TIR Optical Prism',
+        type: 'prism',
+        position: [0, 2.0, 0],
+        rotation: [0, 0, 0],
+        scale: [1.2, 1.2, 1.2],
+        mass: 1.5,
+        isStatic: true,
+        material: { friction: 0.2, restitution: 0.4, density: 2600 },
+        initialVelocity: [0, 0, 0],
+        refractiveIndex: 1.52,
+        cauchyB: 0.004,
+        prismAngle: 60,
+        color: '#F0F8FF'
+      }
+    ]
+  },
+  {
+    id: 'concave-mirror',
+    title: 'Concave Spherical Mirror Focus',
+    description: 'Parallel rays striking a concave spherical surface reflect specularly according to law of reflection and converge at focal point f = R/2.',
+    formula: 'f = \\frac{R}{2}, \\quad \\vec{r} = \\vec{d} - 2(\\vec{d}\\cdot\\vec{n})\\vec{n}',
+    gravity: [0, 0, 0],
+    initialCaption: 'Parallel beam array reflecting from spherical concave mirror of radius R = 6m, converging at f = 3m.',
+    objects: [
+      {
+        id: 'mirror-emitter',
+        name: 'Parallel Laser Array',
+        type: 'laser_emitter',
+        position: [-5, 2, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 1.0,
+        isStatic: true,
+        material: { friction: 0.2, restitution: 0.2, density: 1000 },
+        initialVelocity: [0, 0, 0],
+        beamWavelength: 490, // Cyan
+        beamSpread: 3.5,
+        rayCount: 7,
+        color: '#19E3F5'
+      },
+      {
+        id: 'concave-mirror-element',
+        name: 'Concave Mirror (R = 6m)',
+        type: 'curved_mirror',
+        position: [2.5, 2, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 2.0,
+        isStatic: true,
+        material: { friction: 0.2, restitution: 0.4, density: 2500 },
+        initialVelocity: [0, 0, 0],
+        mirrorRadius: 6.0,
+        aperture: 4.0,
+        color: '#FFFFFF'
+      }
+    ]
   }
 ];

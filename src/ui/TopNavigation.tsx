@@ -96,12 +96,45 @@ export const TopNavigation: React.FC = () => {
           </button>
 
           {showPresetMenu && (
-            <div className="absolute top-full left-0 mt-2 w-72 glass-panel rounded-xl p-1.5 shadow-glass border border-greige-border z-50">
-              <div className="px-2 py-1 text-[10px] uppercase font-mono text-limestone-muted">
-                Mechanics Presets
+            <div className="absolute top-full left-0 mt-2 w-80 glass-panel rounded-xl p-2 shadow-glass border border-greige-border z-50 max-h-96 overflow-y-auto">
+              {/* Mechanics Presets */}
+              <div className="px-2 py-1 text-[10px] uppercase font-mono text-[#19E3F5] font-semibold flex items-center justify-between">
+                <span>Mechanics Presets</span>
+                <span className="text-limestone-muted text-[9px]">Newtonian</span>
               </div>
-              <div className="space-y-0.5 mt-1">
-                {SCENE_PRESETS.map((preset) => (
+              <div className="space-y-0.5 mt-0.5 mb-2">
+                {SCENE_PRESETS.filter((p) =>
+                  ['projectile-launcher', 'inclined-plane', 'harmonic-spring', 'simple-pendulum', 'free-fall'].includes(p.id)
+                ).map((preset) => (
+                  <button
+                    key={preset.id}
+                    onClick={() => {
+                      loadPreset(preset.id);
+                      setShowPresetMenu(false);
+                    }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-mono flex items-center justify-between transition-colors ${
+                      activePresetId === preset.id
+                        ? 'bg-[#19E3F5]/15 text-[#19E3F5] font-semibold'
+                        : 'text-limestone hover:bg-white/10'
+                    }`}
+                  >
+                    <span>{preset.title}</span>
+                    {activePresetId === preset.id && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#19E3F5]" />
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Optics & Wave Presets */}
+              <div className="px-2 py-1 text-[10px] uppercase font-mono text-purple-400 font-semibold flex items-center justify-between border-t border-white/5 pt-2">
+                <span>Optics & Waves</span>
+                <span className="text-limestone-muted text-[9px]">Geometric & Physical</span>
+              </div>
+              <div className="space-y-0.5 mt-0.5">
+                {SCENE_PRESETS.filter((p) =>
+                  ['thin-lens-imaging', 'prism-dispersion', 'tir-reflection', 'concave-mirror'].includes(p.id)
+                ).map((preset) => (
                   <button
                     key={preset.id}
                     onClick={() => {
