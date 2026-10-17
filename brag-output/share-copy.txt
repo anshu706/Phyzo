@@ -1,0 +1,1 @@
+Stop memorizing static equations from 2D textbooks. We built Phyzo: an interactive 3D physics laboratory with real-time wave optics, electromagnetic cyclotron fields, quantum probability clouds, and live mathematical formula derivations.
