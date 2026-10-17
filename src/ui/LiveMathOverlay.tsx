@@ -270,6 +270,270 @@ export const LiveMathOverlay: React.FC = () => {
               );
             })()}
           </div>
+        ) : activePresetId === 'electric-dipole' ? (
+          <div className="space-y-2">
+            {(() => {
+              const q1 = 2.0;
+              const q2 = -2.0;
+              const d = 5.0; // distance between charges
+              const k_e = 8.98755e9;
+              const forceMicro = (k_e * (q1 * 1e-6) * (Math.abs(q2) * 1e-6)) / (d * d);
+
+              return (
+                <>
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1 flex items-center justify-between">
+                      <span>Coulomb's Law (Attractive)</span>
+                      <span className="text-rose-400 font-semibold">{forceMicro.toFixed(4)} N</span>
+                    </div>
+                    <KaTeXBlock math={`F_e = \\frac{1}{4\\pi\\varepsilon_0}\\frac{|q_1 q_2|}{r^2} = ${forceMicro.toFixed(4)}\\text{ N}`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Gauss's Law for Electrostatics</div>
+                    <KaTeXBlock math={`\\nabla \\cdot \\vec{E} = \\frac{\\rho}{\\varepsilon_0}, \\quad \\oint \\vec{E} \\cdot d\\vec{A} = \\frac{Q_{\\text{enc}}}{\\varepsilon_0}`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Electric Dipole Moment</div>
+                    <KaTeXBlock math={`\\vec{p} = q \\vec{d} = (2.0\\,\\mu\\text{C})(5.0\\text{ m}) = 1.0\\times 10^{-5}\\text{ C}\\cdot\\text{m}`} />
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        ) : activePresetId === 'bar-magnet-field' ? (
+          <div className="space-y-2">
+            {(() => {
+              const magnet = objects.find((o) => o.type === 'bar_magnet') || targetObj;
+              const mMag = magnet?.magneticMoment || 18.0;
+
+              return (
+                <>
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1 flex items-center justify-between">
+                      <span>Gauss's Law for Magnetism</span>
+                      <span className="text-olive font-semibold">No Monopoles</span>
+                    </div>
+                    <KaTeXBlock math={`\\nabla \\cdot \\vec{B} = 0, \\quad \\oint \\vec{B} \\cdot d\\vec{A} = 0`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Dipole Moment Flux Field</div>
+                    <KaTeXBlock math={`\\vec{B}(\\vec{r}) \\approx \\frac{\\mu_0}{4\\pi} \\left[ \\frac{3(\\vec{m}\\cdot\\hat{r})\\hat{r} - \\vec{m}}{r^3} \\right]`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">On-Axis Magnetic Field (r=2m)</div>
+                    <KaTeXBlock math={`B_{axis} = \\frac{\\mu_0 m}{2\\pi r^3} = \\frac{(4\\pi\\times 10^{-7})(${mMag.toFixed(0)})}{2\\pi (8)} = ${( (4e-7 * mMag) / (2 * 8) * 1e6 ).toFixed(1)}\\,\\mu\\text{T}`} />
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        ) : activePresetId === 'lorentz-deflection' ? (
+          <div className="space-y-2">
+            {(() => {
+              const fieldObj = objects.find((o) => o.type === 'uniform_field');
+              const particle = objects.find((o) => o.type === 'charged_particle') || targetObj;
+              const q = particle?.charge || 1.0;
+              const v = Math.max(0.5, speed || 4.0);
+              const B = Math.abs(fieldObj?.bFieldVector?.[2] || 1.5);
+              const mPart = particle?.mass || 1.0;
+              const rGyr = (mPart * v) / (Math.abs(q) * B);
+              const omegaC = (Math.abs(q) * B) / mPart;
+
+              return (
+                <>
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1 flex items-center justify-between">
+                      <span>Lorentz Force Vector Equation</span>
+                      <span className="text-[#19E3F5] font-semibold">q = {q.toFixed(1)} C</span>
+                    </div>
+                    <KaTeXBlock math={`\\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B})`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Cyclotron Gyroradius</div>
+                    <KaTeXBlock math={`r_{gyr} = \\frac{m v}{|q|B} = \\frac{(${mPart.toFixed(1)})(${v.toFixed(1)})}{(${Math.abs(q).toFixed(1)})(${B.toFixed(1)})} = ${rGyr.toFixed(2)}\\text{ m}`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Cyclotron Angular Frequency</div>
+                    <KaTeXBlock math={`\\omega_c = \\frac{|q|B}{m} = \\frac{(${Math.abs(q).toFixed(1)})(${B.toFixed(1)})}{${mPart.toFixed(1)}} = ${omegaC.toFixed(2)}\\text{ rad/s}`} />
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        ) : activePresetId === 'solenoid-biot-savart' ? (
+          <div className="space-y-2">
+            {(() => {
+              const solenoid = objects.find((o) => o.type === 'solenoid') || targetObj;
+              const I = solenoid?.current || 10.0;
+              const N = solenoid?.turnsCount || 100;
+              const L = 4.0; // length in meters
+              const nTurns = N / L;
+              const mu0 = 4 * Math.PI * 1e-7;
+              const B_internal = mu0 * nTurns * I;
+
+              return (
+                <>
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1 flex items-center justify-between">
+                      <span>Ampère's Law (Ideal Solenoid)</span>
+                      <span className="text-amber-400 font-semibold">I = {I.toFixed(1)} A</span>
+                    </div>
+                    <KaTeXBlock math={`B = \\mu_0 n I = \\mu_0 \\left(\\frac{N}{L}\\right) I`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Internal Magnetic Flux Density</div>
+                    <KaTeXBlock math={`B = (4\\pi\\times 10^{-7})(${nTurns.toFixed(0)})(${I.toFixed(0)}) = ${(B_internal * 1e3).toFixed(2)}\\text{ mT}`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Biot-Savart Differential Law</div>
+                    <KaTeXBlock math={`d\\vec{B} = \\frac{\\mu_0 I}{4\\pi} \\frac{d\\vec{\\ell} \\times \\hat{r}}{r^2}`} />
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        ) : activePresetId === 'gas-thermodynamics' ? (
+          <div className="space-y-2">
+            {(() => {
+              const chamber = objects.find((o) => o.type === 'gas_chamber') || targetObj;
+              const T = chamber?.temperature || 300;
+              const N = chamber?.particleCount || 80;
+              const V = 4 * 4 * 4; // 64 m^3
+              const kB = 1.3806e-23;
+              const P = (N * kB * T) / V;
+              const vRms = Math.sqrt((3 * 1.0 * T) / 1.0); // scaled sim units
+
+              return (
+                <>
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1 flex items-center justify-between">
+                      <span>Ideal Gas Law Equation</span>
+                      <span className="text-emerald-400 font-semibold">T = {T} K</span>
+                    </div>
+                    <KaTeXBlock math={`PV = N k_B T \\implies P = \\frac{N k_B T}{V}`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Root-Mean-Square Speed (v_rms)</div>
+                    <KaTeXBlock math={`v_{rms} = \\sqrt{\\frac{3 k_B T}{m}} = ${vRms.toFixed(2)}\\text{ m/s}`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Average Molecular Kinetic Energy</div>
+                    <KaTeXBlock math={`\\langle K \\rangle = \\frac{3}{2} k_B T = \\frac{3}{2}(1.38\\times 10^{-23})(${T}) = ${(1.5 * kB * T * 1e21).toFixed(2)}\\times 10^{-21}\\text{ J}`} />
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        ) : activePresetId === 'photoelectric-effect' ? (
+          <div className="space-y-2">
+            {(() => {
+              const photo = objects.find((o) => o.type === 'photoelectric_emitter') || targetObj;
+              const freq = photo?.incidentPhotonFreq || 7.5e14;
+              const phi = photo?.workFunction || 2.1;
+              const h_eV = 4.135667e-15; // eV·s
+              const E_photon = h_eV * freq;
+              const keMax = Math.max(0, E_photon - phi);
+              const vStop = keMax;
+
+              return (
+                <>
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1 flex items-center justify-between">
+                      <span>Einstein Photoelectric Equation</span>
+                      <span className="text-purple-400 font-semibold">{keMax > 0 ? 'Photoelectrons Ejected' : 'No Emission'}</span>
+                    </div>
+                    <KaTeXBlock math={`K_{max} = hf - \\Phi = ${E_photon.toFixed(2)} - ${phi.toFixed(2)} = ${keMax.toFixed(2)}\\text{ eV}`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Incident Photon Energy</div>
+                    <KaTeXBlock math={`E = hf = (${(freq / 1e14).toFixed(1)}\\times 10^{14}\\text{ Hz})h = ${E_photon.toFixed(2)}\\text{ eV}`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Stopping Potential Voltage</div>
+                    <KaTeXBlock math={`V_{stop} = \\frac{K_{max}}{e} = ${vStop.toFixed(2)}\\text{ Volts}`} />
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        ) : activePresetId === 'hydrogen-orbital' ? (
+          <div className="space-y-2">
+            {(() => {
+              const hAtom = objects.find((o) => o.type === 'hydrogen_atom') || targetObj;
+              const n = hAtom?.quantumN || 2;
+              const E_n = -13.6 / (n * n);
+              const r_n = n * n; // in Bohr radii
+
+              return (
+                <>
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1 flex items-center justify-between">
+                      <span>Bohr Energy Quantization</span>
+                      <span className="text-[#19E3F5] font-semibold">n = {n}</span>
+                    </div>
+                    <KaTeXBlock math={`E_n = -\\frac{13.6\\text{ eV}}{n^2} = -\\frac{13.6}{${n}^2} = ${E_n.toFixed(2)}\\text{ eV}`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Quantized Orbital Radius</div>
+                    <KaTeXBlock math={`r_n = n^2 a_0 = ${n}^2(0.529\\text{ Å}) = ${(r_n * 0.529).toFixed(2)}\\text{ Å}`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Lyman Transition Emission (n → 1)</div>
+                    <KaTeXBlock math={`\\Delta E = 13.6\\left(1 - \\frac{1}{${n}^2}\\right) = ${(13.6 * (1 - 1 / (n * n))).toFixed(2)}\\text{ eV}`} />
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        ) : activePresetId === 'quantum-infinite-well' ? (
+          <div className="space-y-2">
+            {(() => {
+              const well = objects.find((o) => o.type === 'quantum_well') || targetObj;
+              const n = well?.quantumN || 2;
+              const L_nm = well?.wellWidth || 2.5;
+              const L_m = L_nm * 1e-9;
+              const h_p = 6.626e-34;
+              const m_e = 9.109e-31;
+              const E_joules = (n * n * h_p * h_p) / (8 * m_e * L_m * L_m);
+              const E_eV = E_joules / 1.602e-19;
+
+              return (
+                <>
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1 flex items-center justify-between">
+                      <span>1D Schrödinger Time-Independent Eq</span>
+                      <span className="text-emerald-400 font-semibold">n = {n}</span>
+                    </div>
+                    <KaTeXBlock math={`-\\frac{\\hbar^2}{2m}\\frac{d^2\\psi}{dx^2} = E\\psi`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Quantized Energy Eigenstate</div>
+                    <KaTeXBlock math={`E_n = \\frac{n^2 h^2}{8mL^2} = \\frac{(${n})^2 h^2}{8m(${L_nm.toFixed(1)}\\text{nm})^2} = ${E_eV.toFixed(3)}\\text{ eV}`} />
+                  </div>
+
+                  <div className="bg-black/30 p-2.5 rounded-lg border border-white/5">
+                    <div className="text-[10px] font-mono text-limestone-muted mb-1">Normalized Standing Wave Function</div>
+                    <KaTeXBlock math={`\\psi_n(x) = \\sqrt{\\frac{2}{L}}\\sin\\left(\\frac{${n}\\pi x}{L}\\right)`} />
+                  </div>
+                </>
+              );
+            })()}
+          </div>
         ) : (
           /* General Newtonian Mechanics */
           <div className="space-y-2">

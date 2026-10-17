@@ -8,6 +8,9 @@ import { PostProcessingPipeline } from './PostProcessingPipeline';
 import { PhysicsObjectRenderer } from '../modules/mechanics/PhysicsObjectRenderer';
 import { OpticalElementRenderer } from '../modules/optics/OpticalElementRenderer';
 import { OpticsRayRenderer } from '../modules/optics/OpticsRayRenderer';
+import { EMElementRenderer } from '../modules/em/EMElementRenderer';
+import { EMFieldRenderer } from '../modules/em/EMFieldRenderer';
+import { ModernElementRenderer } from '../modules/modern/ModernElementRenderer';
 import { useSceneStore } from '../core/useSceneStore';
 import { useSimulationStore } from '../core/useSimulationStore';
 
@@ -21,6 +24,21 @@ const OPTICS_TYPES = new Set([
   'laser_emitter',
   'white_light_emitter'
 ]);
+const EM_TYPES = new Set([
+  'charge_positive',
+  'charge_negative',
+  'bar_magnet',
+  'uniform_field',
+  'current_wire',
+  'solenoid',
+  'charged_particle'
+]);
+const MODERN_TYPES = new Set([
+  'gas_chamber',
+  'photoelectric_emitter',
+  'hydrogen_atom',
+  'quantum_well'
+]);
 
 export const Viewport3D: React.FC = () => {
   const objects = useSceneStore((state) => state.objects);
@@ -32,6 +50,8 @@ export const Viewport3D: React.FC = () => {
 
   const mechanicsObjects = objects.filter((o) => MECHANICS_TYPES.has(o.type));
   const opticsObjects = objects.filter((o) => OPTICS_TYPES.has(o.type));
+  const emObjects = objects.filter((o) => EM_TYPES.has(o.type));
+  const modernObjects = objects.filter((o) => MODERN_TYPES.has(o.type));
 
   return (
     <div
@@ -80,6 +100,17 @@ export const Viewport3D: React.FC = () => {
             <OpticalElementRenderer key={obj.id} data={obj} />
           ))}
           <OpticsRayRenderer />
+
+          {/* Render Electromagnetism Elements & Dynamic 3D Vector Field Lines */}
+          {emObjects.map((obj) => (
+            <EMElementRenderer key={obj.id} data={obj} />
+          ))}
+          <EMFieldRenderer />
+
+          {/* Render Modern, Quantum & Thermodynamics Elements */}
+          {modernObjects.map((obj) => (
+            <ModernElementRenderer key={obj.id} data={obj} />
+          ))}
 
           <PostProcessingPipeline />
         </Suspense>

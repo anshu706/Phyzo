@@ -131,9 +131,67 @@ export const TopNavigation: React.FC = () => {
                 <span>Optics & Waves</span>
                 <span className="text-limestone-muted text-[9px]">Geometric & Physical</span>
               </div>
-              <div className="space-y-0.5 mt-0.5">
+              <div className="space-y-0.5 mt-0.5 mb-2">
                 {SCENE_PRESETS.filter((p) =>
                   ['thin-lens-imaging', 'prism-dispersion', 'tir-reflection', 'concave-mirror'].includes(p.id)
+                ).map((preset) => (
+                  <button
+                    key={preset.id}
+                    onClick={() => {
+                      loadPreset(preset.id);
+                      setShowPresetMenu(false);
+                    }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-mono flex items-center justify-between transition-colors ${
+                      activePresetId === preset.id
+                        ? 'bg-[#19E3F5]/15 text-[#19E3F5] font-semibold'
+                        : 'text-limestone hover:bg-white/10'
+                    }`}
+                  >
+                    <span>{preset.title}</span>
+                    {activePresetId === preset.id && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#19E3F5]" />
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Electromagnetism Presets (Phase 3) */}
+              <div className="px-2 py-1 text-[10px] uppercase font-mono text-rose-400 font-semibold flex items-center justify-between border-t border-white/5 pt-2">
+                <span>Electromagnetism</span>
+                <span className="text-limestone-muted text-[9px]">Maxwell & Lorentz</span>
+              </div>
+              <div className="space-y-0.5 mt-0.5 mb-2">
+                {SCENE_PRESETS.filter((p) =>
+                  ['electric-dipole', 'bar-magnet-field', 'lorentz-deflection', 'solenoid-biot-savart'].includes(p.id)
+                ).map((preset) => (
+                  <button
+                    key={preset.id}
+                    onClick={() => {
+                      loadPreset(preset.id);
+                      setShowPresetMenu(false);
+                    }}
+                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-xs font-mono flex items-center justify-between transition-colors ${
+                      activePresetId === preset.id
+                        ? 'bg-[#19E3F5]/15 text-[#19E3F5] font-semibold'
+                        : 'text-limestone hover:bg-white/10'
+                    }`}
+                  >
+                    <span>{preset.title}</span>
+                    {activePresetId === preset.id && (
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#19E3F5]" />
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Modern & Quantum Presets (Phase 4) */}
+              <div className="px-2 py-1 text-[10px] uppercase font-mono text-emerald-400 font-semibold flex items-center justify-between border-t border-white/5 pt-2">
+                <span>Modern & Quantum</span>
+                <span className="text-limestone-muted text-[9px]">Thermo & Schrödinger</span>
+              </div>
+              <div className="space-y-0.5 mt-0.5">
+                {SCENE_PRESETS.filter((p) =>
+                  ['gas-thermodynamics', 'photoelectric-effect', 'hydrogen-orbital', 'quantum-infinite-well'].includes(p.id)
                 ).map((preset) => (
                   <button
                     key={preset.id}

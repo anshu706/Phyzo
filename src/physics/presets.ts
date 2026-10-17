@@ -370,5 +370,237 @@ export const SCENE_PRESETS: ScenePreset[] = [
         color: '#FFFFFF'
       }
     ]
+  },
+
+  // ------------------- Electromagnetism Presets (Phase 3) -------------------
+  {
+    id: 'electric-dipole',
+    title: "Electric Dipole & Coulomb's Law",
+    description: "Two opposite charges create an electric field whose lines diverge from positive (+q) and terminate on negative (-q).",
+    formula: '\\vec{E}(\\vec{r}) = \\frac{1}{4\\pi\\varepsilon_0} \\sum_i \\frac{q_i}{|\\vec{r} - \\vec{r}_i|^3}(\\vec{r} - \\vec{r}_i)',
+    gravity: [0, 0, 0],
+    initialCaption: 'Electric dipole (+2μC and -2μC). Rosewood field lines trace continuous force vectors.',
+    objects: [
+      {
+        id: 'charge-pos',
+        name: 'Positive Charge (+2μC)',
+        type: 'charge_positive',
+        position: [-2.5, 2.0, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 0.01,
+        isStatic: true,
+        material: { friction: 0, restitution: 0, density: 1000 },
+        initialVelocity: [0, 0, 0],
+        charge: 2.0,
+        color: '#DD0200'
+      },
+      {
+        id: 'charge-neg',
+        name: 'Negative Charge (-2μC)',
+        type: 'charge_negative',
+        position: [2.5, 2.0, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 0.01,
+        isStatic: true,
+        material: { friction: 0, restitution: 0, density: 1000 },
+        initialVelocity: [0, 0, 0],
+        charge: -2.0,
+        color: '#2563EB'
+      }
+    ]
+  },
+  {
+    id: 'bar-magnet-field',
+    title: 'Bar Magnet Dipole Field',
+    description: 'Magnetic field lines form continuous closed loops originating from North pole and returning through South pole.',
+    formula: '\\nabla \\cdot \\vec{B} = 0, \\quad \\vec{B}(\\vec{r}) = \\frac{\\mu_0}{4\\pi} \\left[ \\frac{3(\\vec{m}\\cdot\\hat{r})\\hat{r} - \\vec{m}}{r^3} \\right]',
+    gravity: [0, 0, 0],
+    initialCaption: 'Bar magnet dipole field with moment m = 18 A·m². Notice no magnetic monopoles exist.',
+    objects: [
+      {
+        id: 'magnet-element',
+        name: 'Permanent Bar Magnet',
+        type: 'bar_magnet',
+        position: [0, 2.0, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 0.8,
+        isStatic: true,
+        material: { friction: 0.3, restitution: 0.2, density: 7800 },
+        initialVelocity: [0, 0, 0],
+        magneticMoment: 18.0,
+        color: '#DC2626'
+      }
+    ]
+  },
+  {
+    id: 'lorentz-deflection',
+    title: 'Lorentz Force & Charged Particle Deflection',
+    description: 'A charged particle enters a magnetic field perpendicular to velocity, experiencing centripetal magnetic force F = q(v × B).',
+    formula: '\\vec{F} = q(\\vec{E} + \\vec{v} \\times \\vec{B}), \\quad r_{gyr} = \\frac{mv_\\perp}{|q|B}',
+    gravity: [0, 0, 0],
+    initialCaption: 'Charged test particle launched into uniform B field. Magnetic Lorentz force bends path into cyclotron orbit.',
+    objects: [
+      {
+        id: 'lorentz-field',
+        name: 'Uniform Field Zone',
+        type: 'uniform_field',
+        position: [0, 2.0, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 0,
+        isStatic: true,
+        material: { friction: 0, restitution: 0, density: 0 },
+        initialVelocity: [0, 0, 0],
+        eFieldVector: [0, 3.0, 0],
+        bFieldVector: [0, 0, 1.5],
+        color: '#19E3F5'
+      },
+      {
+        id: 'test-particle-1',
+        name: 'Charged Particle (+1C)',
+        type: 'charged_particle',
+        position: [-3.5, 2.0, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 1.0,
+        isStatic: false,
+        material: { friction: 0, restitution: 1.0, density: 1000 },
+        initialVelocity: [4.0, 0, 0],
+        charge: 1.0,
+        color: '#19E3F5'
+      }
+    ]
+  },
+  {
+    id: 'solenoid-biot-savart',
+    title: 'Solenoid & Biot-Savart Law',
+    description: 'Electric current circulating through tight helical loops generates a uniform internal magnetic field B = μ₀·n·I.',
+    formula: 'B = \\mu_0 n I, \\quad d\\vec{B} = \\frac{\\mu_0 I}{4\\pi} \\frac{d\\vec{\\ell} \\times \\hat{r}}{r^2}',
+    gravity: [0, 0, 0],
+    initialCaption: 'Solenoid with N=100 turns carrying current I = 10A. High flux density inside core.',
+    objects: [
+      {
+        id: 'solenoid-element',
+        name: 'Helical Solenoid Core',
+        type: 'solenoid',
+        position: [0, 2.0, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 2.5,
+        isStatic: true,
+        material: { friction: 0.3, restitution: 0.2, density: 8900 },
+        initialVelocity: [0, 0, 0],
+        current: 10.0,
+        turnsCount: 100,
+        color: '#F59E0B'
+      }
+    ]
+  },
+
+  // ------------------- Modern, Quantum & Thermo Presets (Phase 4) -------------------
+  {
+    id: 'gas-thermodynamics',
+    title: 'Ideal Gas & Maxwell-Boltzmann Distribution',
+    description: 'Ensemble of gas particles colliding elastically with chamber walls, yielding pressure P = N·kB·T / V and Maxwell speed distribution.',
+    formula: 'PV = N k_B T, \\quad v_{rms} = \\sqrt{\\frac{3 k_B T}{m}}, \\quad f(v) \\propto v^2 e^{-\\frac{mv^2}{2k_BT}}',
+    gravity: [0, 0, 0],
+    initialCaption: 'Statistical gas chamber at T = 300K. Particles bounce elastically, illustrating kinetic theory of gases.',
+    objects: [
+      {
+        id: 'chamber-1',
+        name: 'Chamber (T = 300K)',
+        type: 'gas_chamber',
+        position: [0, 2.0, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 10,
+        isStatic: true,
+        material: { friction: 0, restitution: 1.0, density: 1000 },
+        initialVelocity: [0, 0, 0],
+        temperature: 300,
+        particleCount: 80,
+        chamberDimensions: [4, 4, 4],
+        color: '#F0E6D8'
+      }
+    ]
+  },
+  {
+    id: 'photoelectric-effect',
+    title: 'Einstein Photoelectric Effect',
+    description: 'Photons of frequency f strike metal cathode with work function φ. Electrons are ejected only when hf > φ with KE = hf - φ.',
+    formula: 'E_k = hf - \\Phi, \\quad V_{stop} = \\frac{hf - \\Phi}{e}',
+    gravity: [0, 0, 0],
+    initialCaption: 'Ultraviolet light (f = 7.5×10¹⁴ Hz, 3.1 eV) strikes Cesium plate (φ = 2.1 eV), releasing photoelectrons.',
+    objects: [
+      {
+        id: 'photoelectric-unit',
+        name: 'Photoelectric Apparatus',
+        type: 'photoelectric_emitter',
+        position: [0, 2.0, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 5,
+        isStatic: true,
+        material: { friction: 0.3, restitution: 0.1, density: 7800 },
+        initialVelocity: [0, 0, 0],
+        workFunction: 2.1,
+        incidentPhotonFreq: 7.5e14,
+        color: '#94A3B8'
+      }
+    ]
+  },
+  {
+    id: 'hydrogen-orbital',
+    title: 'Hydrogen Atom Bohr Orbit & Probability Cloud',
+    description: 'Quantum state of electron in Coulomb potential. Quantized energy levels E_n = -13.6/n² eV and 3D wave function |Ψ_nlm|².',
+    formula: 'E_n = -\\frac{13.6\\text{ eV}}{n^2}, \\quad \\psi_{nlm}(r, \\theta, \\phi) = R_{nl}(r) Y_l^m(\\theta, \\phi)',
+    gravity: [0, 0, 0],
+    initialCaption: 'Hydrogen atom in state (n=2, l=1, m=0). Central proton with quantized Bohr orbits and probability cloud.',
+    objects: [
+      {
+        id: 'h-atom-1',
+        name: 'Hydrogen Atom (n=2)',
+        type: 'hydrogen_atom',
+        position: [0, 2.0, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 1,
+        isStatic: true,
+        material: { friction: 0, restitution: 0, density: 1000 },
+        initialVelocity: [0, 0, 0],
+        quantumN: 2,
+        quantumL: 1,
+        quantumM: 0,
+        color: '#19E3F5'
+      }
+    ]
+  },
+  {
+    id: 'quantum-infinite-well',
+    title: '1D Infinite Quantum Potential Well',
+    description: 'Confinement in 1D box creates standing de Broglie matter waves with discrete energy eigenstates E_n = n²h²/(8mL²).',
+    formula: '\\psi_n(x) = \\sqrt{\\frac{2}{L}}\\sin\\left(\\frac{n\\pi x}{L}\\right), \\quad E_n = \\frac{n^2 h^2}{8mL^2}',
+    gravity: [0, 0, 0],
+    initialCaption: 'Infinite square well (L = 2.5 nm). Blue curve represents wave function ψ(x); Red curve is probability density |ψ|².',
+    objects: [
+      {
+        id: 'q-well-1',
+        name: 'Potential Well (n=2)',
+        type: 'quantum_well',
+        position: [0, 2.0, 0],
+        rotation: [0, 0, 0],
+        scale: [1, 1, 1],
+        mass: 1,
+        isStatic: true,
+        material: { friction: 0, restitution: 0, density: 1000 },
+        initialVelocity: [0, 0, 0],
+        quantumN: 2,
+        wellWidth: 2.5,
+        color: '#7D4047'
+      }
+    ]
   }
 ];
